@@ -1,0 +1,46 @@
+<!DOCTYPE html>
+<html lang="vi">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title><%= pageTitle %> - Asset Management System</title>
+  <link rel="stylesheet" href="/style.css">
+  <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+</head>
+<body>
+  <!-- Sidebar -->
+  <div class="sidebar">
+    <div class="brand">
+      <div class="brand-icon">
+        <i class="fa-solid fa-boxes-stacked"></i>
+      </div>
+      <span>AMS Portal</span>
+    </div>
+    <ul class="nav-menu">
+      <li class="nav-item <%= pageTitle.includes('Tổng quan') ? 'active' : '' %>">
+        <a href="/"><i class="fa-solid fa-chart-pie"></i> Tổng Quan</a>
+      </li>
+      <li class="nav-item <%= pageTitle.includes('Tài sản') ? 'active' : '' %>">
+        <a href="/assets"><i class="fa-solid fa-laptop-code"></i> Quản Lý Tài Sản</a>
+      </li>
+      <li class="nav-item <%= pageTitle.includes('Bảo trì') ? 'active' : '' %>">
+        <a href="/maintenance"><i class="fa-solid fa-screwdriver-wrench"></i> Lịch Sử Bảo Trì</a>
+      </li>
+      <li class="nav-item <%= pageTitle.includes('Danh mục') ? 'active' : '' %>">
+        <a href="/categories"><i class="fa-solid fa-layer-group"></i> Danh Mục Thiết Bị</a>
+      </li>
+    </ul>
+    <div class="nav-footer">
+      <p><i class="fa-solid fa-shield-halved"></i> Security Hardened v1.0</p>
+      <p style="margin-top: 4px; font-size: 0.75rem;">Prometheus + Loki + Grafana</p>
+    </div>
+  </div>
+
+  <!-- Main Content Wrapper -->
+  <div class="main-content">
+    <div class="top-bar">
+      <h1><%= pageTitle %></h1>
+      <div class="user-badge">
+        <i class="fa-solid fa-user-shield" style="color: #34d399; margin-right: 6px;"></i> Quản trị viên (admin)
+      </div>
+    </div>

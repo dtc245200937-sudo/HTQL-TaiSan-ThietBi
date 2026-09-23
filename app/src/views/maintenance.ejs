@@ -1,0 +1,125 @@
+<%- include('header') %>
+
+<!-- Maintenance Top Bar -->
+<div class="section-card" style="margin-bottom: 1.5rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center;">
+    <div>
+      <h2 style="font-size: 1.2rem; margin-bottom: 0.2rem;">Lịch Sử & Nhật Ký Bảo Trì Thiết Bị</h2>
+      <p style="font-size: 0.85rem; color: var(--text-muted);">Theo dõi tình trạng bảo dưỡng, chi phí sửa chữa và linh kiện thay thế.</p>
+    </div>
+    <button class="btn btn-primary" onclick="document.getElementById('maintModal').style.display='block'">
+      <i class="fa-solid fa-plus"></i> Tạo Phiếu Bảo Trì Mới
+    </button>
+  </div>
+</div>
+
+<!-- Maintenance Logs Table -->
+<div class="section-card">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Mã TS</th>
+          <th>Tên Thiết Bị</th>
+          <th>Ngày Thực Hiện</th>
+          <th>Loại Bảo Trì</th>
+          <th>Người Thực Hiện</th>
+          <th>Nội Dung / Mô Tả</th>
+          <th>Chi Phí (VNĐ)</th>
+          <th>Kết Quả</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (logs.length === 0) { %>
+          <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">Chưa có dữ liệu bảo trì</td></tr>
+        <% } else { %>
+          <% logs.forEach(l => { %>
+            <tr>
+              <td><strong><%= l.asset_code %></strong></td>
+              <td><%= l.asset_name %></td>
+              <td><%= new Date(l.maintenance_date).toLocaleDateString('vi-VN') %></td>
+              <td><span class="badge badge-secondary"><%= l.maintenance_type %></span></td>
+              <td><%= l.performer || 'N/A' %></td>
+              <td style="max-width: 250px; font-size: 0.85rem;"><%= l.description %></td>
+              <td><strong><%= (parseFloat(l.cost)).toLocaleString('vi-VN') %> ₫</strong></td>
+              <td>
+                <span class="badge <%= l.result === 'Hoàn thành' ? 'badge-success' : (l.result === 'Đang xử lý' ? 'badge-warning' : 'badge-danger') %>">
+                  <%= l.result %>
+                </span>
+              </td>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Maintenance Modal -->
+<div id="maintModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; overflow-y:auto;">
+  <div class="section-card" style="max-width: 550px; margin: 3rem auto; background: var(--card-bg);">
+    <div class="section-header">
+      <h2>Tạo Phiếu Bảo Trì Mới</h2>
+      <button onclick="document.getElementById('maintModal').style.display='none'" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
+    </div>
+    <form action="/maintenance/add" method="POST">
+      <div class="form-group">
+        <label>Chọn Thiết Bị Cần Bảo Trì *</label>
+        <select name="asset_id" class="form-select" required>
+          <option value="">-- Select Asset --</option>
+          <% assets.forEach(a => { %>
+            <option value="<%= a.id %>">[<%= a.asset_code %>] - <%= a.name %></option>
+          <% }) %>
+        </select>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem; margin-top: 0.5rem;">
+        <div class="form-group">
+          <label>Ngày Thực Hiện *</label>
+          <input type="date" name="maintenance_date" class="form-control" required value="<%= new Date().toISOString().split('T')[0] %>">
+        </div>
+        <div class="form-group">
+          <label>Loại Bảo Trì *</label>
+          <select name="maintenance_type" class="form-select" required>
+            <option value="Bảo trì định kỳ">Bảo trì định kỳ</option>
+            <option value="Sửa chữa khẩn cấp">Sửa chữa khẩn cấp</option>
+            <option value="Nâng cấp phần cứng">Nâng cấp phần cứng</option>
+            <option value="Thay thế linh kiện">Thay thế linh kiện</option>
+          </select>
+        </div>
+      </div>
+
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Chi Phí (VNĐ)</label>
+          <input type="number" step="1000" name="cost" class="form-control" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Người Thực Hiện</label>
+          <input type="text" name="performer" class="form-control" placeholder="Kỹ thuật viên / Đơn vị ngoài">
+        </div>
+      </div>
+
+      <div class="form-group">
+        <label>Trạng Thái Kết Quả</label>
+        <select name="result" class="form-select">
+          <option value="Hoàn thành">Hoàn thành</option>
+          <option value="Đang xử lý">Đang xử lý</option>
+          <option value="Chờ linh kiện">Chờ linh kiện</option>
+        </select>
+      </div>
+
+      <div class="form-group">
+        <label>Mô Tả Công Việc / Linh Kiện Thay *</label>
+        <textarea name="description" class="form-control" rows="3" required placeholder="Chi tiết công việc bảo trì..."></textarea>
+      </div>
+
+      <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
+        <button type="button" class="btn" onclick="document.getElementById('maintModal').style.display='none'" style="background:rgba(255,255,255,0.1); color:#fff;">Hủy</button>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Lưu Phiếu Bảo Trì</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('footer') %>

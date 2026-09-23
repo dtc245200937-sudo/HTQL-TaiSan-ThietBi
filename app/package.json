@@ -1,0 +1,21 @@
+{
+  "name": "asset-management-system",
+  "version": "1.0.0",
+  "description": "Hệ thống Quản lý Tài sản và Thiết bị",
+  "main": "src/server.js",
+  "scripts": {
+    "start": "node src/server.js",
+    "dev": "node --watch src/server.js"
+  },
+  "dependencies": {
+    "express": "^4.19.2",
+    "pg": "^8.11.5",
+    "ejs": "^3.1.10",
+    "prom-client": "^15.1.2",
+    "dotenv": "^16.4.5"
+  },
+  "engines": {
+    "node": ">=18.0.0"
+  },
+  "private": true
+}

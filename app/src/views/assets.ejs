@@ -1,0 +1,154 @@
+<%- include('header') %>
+
+<!-- Header Action & Filters -->
+<div class="section-card" style="margin-bottom: 1.5rem;">
+  <div style="display: flex; justify-content: space-between; align-items: center; gap: 1rem; flex-wrap: wrap;">
+    <form action="/assets" method="GET" class="filter-bar" style="margin-bottom: 0;">
+      <input type="text" name="search" class="form-control" placeholder="Tìm theo tên, mã TS, sê-ri..." value="<%= filters.search || '' %>">
+      <select name="status" class="form-select">
+        <option value="">-- Tất cả trạng thái --</option>
+        <option value="Hoạt động" <%= filters.status === 'Hoạt động' ? 'selected' : '' %>>Hoạt động</option>
+        <option value="Đang bảo trì" <%= filters.status === 'Đang bảo trì' ? 'selected' : '' %>>Đang bảo trì</option>
+        <option value="Hỏng" <%= filters.status === 'Hỏng' ? 'selected' : '' %>>Hỏng</option>
+        <option value="Thanh lý" <%= filters.status === 'Thanh lý' ? 'selected' : '' %>>Thanh lý</option>
+      </select>
+      <select name="category" class="form-select">
+        <option value="">-- Tất cả danh mục --</option>
+        <% categories.forEach(c => { %>
+          <option value="<%= c.id %>" <%= filters.category == c.id ? 'selected' : '' %>><%= c.name %></option>
+        <% }) %>
+      </select>
+      <button type="submit" class="btn btn-primary"><i class="fa-solid fa-filter"></i> Lọc</button>
+      <a href="/assets" class="btn" style="background: rgba(255,255,255,0.1); color: #fff;">Xóa lọc</a>
+    </form>
+    
+    <button class="btn btn-primary" onclick="document.getElementById('addModal').style.display='block'">
+      <i class="fa-solid fa-plus"></i> Thêm Tài Sản Mới
+    </button>
+  </div>
+</div>
+
+<!-- Assets Table -->
+<div class="section-card">
+  <div class="table-container">
+    <table>
+      <thead>
+        <tr>
+          <th>Mã TS</th>
+          <th>Tên Tài Sản</th>
+          <th>Danh Mục</th>
+          <th>Số Sê-ri / Model</th>
+          <th>Giá Trị (VNĐ)</th>
+          <th>Vị Trí / Phòng Ban</th>
+          <th>Trạng Thái</th>
+          <th>Thao Tác</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% if (assets.length === 0) { %>
+          <tr><td colspan="8" style="text-align: center; color: var(--text-muted); padding: 2rem;">Không tìm thấy tài sản nào</td></tr>
+        <% } else { %>
+          <% assets.forEach(a => { %>
+            <tr>
+              <td><strong><%= a.asset_code %></strong></td>
+              <td>
+                <div style="font-weight: 600;"><%= a.name %></div>
+                <div style="font-size: 0.75rem; color: var(--text-muted);"><%= a.manufacturer || '' %></div>
+              </td>
+              <td><span class="badge badge-secondary"><%= a.category_name || 'Khác' %></span></td>
+              <td><%= a.serial_number || 'N/A' %> <br><small style="color:var(--text-muted);"><%= a.model || '' %></small></td>
+              <td><%= (parseFloat(a.cost)).toLocaleString('vi-VN') %> ₫</td>
+              <td><%= a.location || 'N/A' %><br><small style="color:var(--text-muted);"><%= a.department || '' %></small></td>
+              <td>
+                <span class="badge <%= a.status === 'Hoạt động' ? 'badge-success' : (a.status === 'Đang bảo trì' ? 'badge-warning' : 'badge-danger') %>">
+                  <%= a.status %>
+                </span>
+              </td>
+              <td>
+                <form action="/assets/delete/<%= a.id %>" method="POST" onsubmit="return confirm('Bạn có chắc chắn muốn xóa tài sản này?');" style="display:inline;">
+                  <button type="submit" class="btn btn-danger" style="padding: 0.3rem 0.6rem; font-size: 0.75rem;">
+                    <i class="fa-solid fa-trash"></i> Xóa
+                  </button>
+                </form>
+              </td>
+            </tr>
+          <% }) %>
+        <% } %>
+      </tbody>
+    </table>
+  </div>
+</div>
+
+<!-- Add Asset Modal -->
+<div id="addModal" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.7); z-index:1000; overflow-y:auto;">
+  <div class="section-card" style="max-width: 600px; margin: 3rem auto; background: var(--card-bg);">
+    <div class="section-header">
+      <h2>Thêm Tài Sản Mới</h2>
+      <button onclick="document.getElementById('addModal').style.display='none'" style="background:none; border:none; color:#fff; font-size:1.5rem; cursor:pointer;">&times;</button>
+    </div>
+    <form action="/assets/add" method="POST">
+      <div style="display:grid; grid-template-columns: 1fr 1fr; gap: 1rem;">
+        <div class="form-group">
+          <label>Mã Tài Sản *</label>
+          <input type="text" name="asset_code" class="form-control" required placeholder="VD: TS-IT-008">
+        </div>
+        <div class="form-group">
+          <label>Tên Tài Sản *</label>
+          <input type="text" name="name" class="form-control" required placeholder="Tên máy móc / thiết bị">
+        </div>
+        <div class="form-group">
+          <label>Danh Mục</label>
+          <select name="category_id" class="form-select">
+            <option value="">-- Chọn danh mục --</option>
+            <% categories.forEach(c => { %>
+              <option value="<%= c.id %>"><%= c.name %></option>
+            <% }) %>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Trạng Thái</label>
+          <select name="status" class="form-select">
+            <option value="Hoạt động">Hoạt động</option>
+            <option value="Đang bảo trì">Đang bảo trì</option>
+            <option value="Hỏng">Hỏng</option>
+            <option value="Thanh lý">Thanh lý</option>
+          </select>
+        </div>
+        <div class="form-group">
+          <label>Số Sê-ri</label>
+          <input type="text" name="serial_number" class="form-control" placeholder="Serial Number">
+        </div>
+        <div class="form-group">
+          <label>Model</label>
+          <input type="text" name="model" class="form-control" placeholder="Model sản phẩm">
+        </div>
+        <div class="form-group">
+          <label>Hãng Sản Xuất</label>
+          <input type="text" name="manufacturer" class="form-control" placeholder="VD: Dell, HP, Cisco">
+        </div>
+        <div class="form-group">
+          <label>Giá Trị (VNĐ)</label>
+          <input type="number" step="1000" name="cost" class="form-control" placeholder="0">
+        </div>
+        <div class="form-group">
+          <label>Vị Trí Lưu Trữ</label>
+          <input type="text" name="location" class="form-control" placeholder="VD: Phòng máy chủ 301">
+        </div>
+        <div class="form-group">
+          <label>Phòng Ban Quản Lý</label>
+          <input type="text" name="department" class="form-control" placeholder="VD: Phòng CNTT">
+        </div>
+      </div>
+      <div class="form-group" style="margin-top: 1rem;">
+        <label>Ghi Chú</label>
+        <textarea name="notes" class="form-control" rows="3" placeholder="Mô tả bổ sung..."></textarea>
+      </div>
+      <div style="display:flex; justify-content:flex-end; gap:1rem; margin-top:1.5rem;">
+        <button type="button" class="btn" onclick="document.getElementById('addModal').style.display='none'" style="background:rgba(255,255,255,0.1); color:#fff;">Hủy</button>
+        <button type="submit" class="btn btn-primary"><i class="fa-solid fa-save"></i> Lưu Tài Sản</button>
+      </div>
+    </form>
+  </div>
+</div>
+
+<%- include('footer') %>

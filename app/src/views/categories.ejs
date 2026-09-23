@@ -1,0 +1,62 @@
+<%- include('header') %>
+
+<div class="grid-2">
+  <!-- Categories List -->
+  <div class="section-card">
+    <div class="section-header">
+      <h2>Danh Mục Thiết Bị & Tài Sản</h2>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Mã DM</th>
+            <th>Tên Danh Mục</th>
+            <th>Số Lượng TS</th>
+            <th>Mô Tả</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (categories.length === 0) { %>
+            <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Chưa có danh mục</td></tr>
+          <% } else { %>
+            <% categories.forEach(c => { %>
+              <tr>
+                <td><strong><%= c.code %></strong></td>
+                <td><%= c.name %></td>
+                <td><span class="badge badge-success"><%= c.asset_count %> tài sản</span></td>
+                <td style="font-size: 0.85rem; color: var(--text-muted);"><%= c.description || 'N/A' %></td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Add Category Form -->
+  <div class="section-card">
+    <div class="section-header">
+      <h2>Thêm Danh Mục Mới</h2>
+    </div>
+    <form action="/categories/add" method="POST">
+      <div class="form-group">
+        <label>Mã Danh Mục (Code) *</label>
+        <input type="text" name="code" class="form-control" required placeholder="VD: CAT-NET, CAT-OFF">
+      </div>
+      <div class="form-group">
+        <label>Tên Danh Mục *</label>
+        <input type="text" name="name" class="form-control" required placeholder="VD: Thiết bị Mạng, Máy tính">
+      </div>
+      <div class="form-group">
+        <label>Mô Tả Chi Tiết</label>
+        <textarea name="description" class="form-control" rows="4" placeholder="Diễn giải chi tiết về nhóm tài sản..."></textarea>
+      </div>
+      <button type="submit" class="btn btn-primary" style="width: 100%; justify-content: center; margin-top: 1rem;">
+        <i class="fa-solid fa-plus-circle"></i> Tạo Danh Mục
+      </button>
+    </form>
+  </div>
+</div>
+
+<%- include('footer') %>

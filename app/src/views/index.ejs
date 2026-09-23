@@ -1,0 +1,122 @@
+<%- include('header') %>
+
+<!-- Stats Grid -->
+<div class="stats-grid">
+  <div class="stat-card">
+    <div class="stat-info">
+      <h3>Tổng Số Tài Sản</h3>
+      <p><%= stats.totalAssets %></p>
+    </div>
+    <div class="stat-icon icon-blue">
+      <i class="fa-solid fa-server"></i>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-info">
+      <h3>Đang Hoạt Động</h3>
+      <p><%= stats.statusMap['Hoạt động'] || 0 %></p>
+    </div>
+    <div class="stat-icon icon-green">
+      <i class="fa-solid fa-circle-check"></i>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-info">
+      <h3>Đang Bảo Trì</h3>
+      <p><%= stats.statusMap['Đang bảo trì'] || 0 %></p>
+    </div>
+    <div class="stat-icon icon-amber">
+      <i class="fa-solid fa-wrench"></i>
+    </div>
+  </div>
+  <div class="stat-card">
+    <div class="stat-info">
+      <h3>Tổng Chi Phí Bảo Trì</h3>
+      <p><%= (stats.totalMaintCost).toLocaleString('vi-VN') %> ₫</p>
+    </div>
+    <div class="stat-icon icon-purple">
+      <i class="fa-solid fa-coins"></i>
+    </div>
+  </div>
+</div>
+
+<!-- Main Dashboard Grid -->
+<div class="grid-2">
+  <!-- Recent Assets -->
+  <div class="section-card">
+    <div class="section-header">
+      <h2><i class="fa-solid fa-clock-rotate-left"></i> Tài Sản Mới Thêm</h2>
+      <a href="/assets" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Xem Tất Cả</a>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Mã TS</th>
+            <th>Tên Tài Sản</th>
+            <th>Danh Mục</th>
+            <th>Trạng Thái</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (recentAssets.length === 0) { %>
+            <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Chưa có tài sản</td></tr>
+          <% } else { %>
+            <% recentAssets.forEach(a => { %>
+              <tr>
+                <td><strong><%= a.asset_code %></strong></td>
+                <td><%= a.name %></td>
+                <td><span class="badge badge-secondary"><%= a.category_name || 'Khác' %></span></td>
+                <td>
+                  <span class="badge <%= a.status === 'Hoạt động' ? 'badge-success' : (a.status === 'Đang bảo trì' ? 'badge-warning' : 'badge-danger') %>">
+                    <%= a.status %>
+                  </span>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+
+  <!-- Recent Maintenance Logs -->
+  <div class="section-card">
+    <div class="section-header">
+      <h2><i class="fa-solid fa-screwdriver-wrench"></i> Nhật Ký Bảo Trì Gần Đây</h2>
+      <a href="/maintenance" class="btn btn-primary" style="padding: 0.4rem 0.8rem; font-size: 0.8rem;">Xem Chi Tiết</a>
+    </div>
+    <div class="table-container">
+      <table>
+        <thead>
+          <tr>
+            <th>Mã TS</th>
+            <th>Loại Bảo Trì</th>
+            <th>Chi Phí</th>
+            <th>Trạng Thái</th>
+          </tr>
+        </thead>
+        <tbody>
+          <% if (recentMaintenance.length === 0) { %>
+            <tr><td colspan="4" style="text-align: center; color: var(--text-muted);">Chưa có lịch sử bảo trì</td></tr>
+          <% } else { %>
+            <% recentMaintenance.forEach(m => { %>
+              <tr>
+                <td><strong><%= m.asset_code %></strong></td>
+                <td><%= m.maintenance_type %></td>
+                <td><%= (parseFloat(m.cost)).toLocaleString('vi-VN') %> ₫</td>
+                <td>
+                  <span class="badge <%= m.result === 'Hoàn thành' ? 'badge-success' : 'badge-warning' %>">
+                    <%= m.result %>
+                  </span>
+                </td>
+              </tr>
+            <% }) %>
+          <% } %>
+        </tbody>
+      </table>
+    </div>
+  </div>
+</div>
+
+<%- include('footer') %>
