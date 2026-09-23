@@ -1,0 +1,87 @@
+{
+  "annotations": { "list": [] },
+  "editable": true,
+  "fiscalYearStartMonth": 0,
+  "graphTooltip": 0,
+  "id": null,
+  "links": [],
+  "liveNow": false,
+  "panels": [
+    {
+      "title": "Total HTTP Requests Count",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 0, "y": 0 },
+      "targets": [
+        {
+          "expr": "sum(http_requests_total)",
+          "legendFormat": "Requests"
+        }
+      ]
+    },
+    {
+      "title": "Active Assets Gauge",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 6, "y": 0 },
+      "targets": [
+        {
+          "expr": "assets_total_count{status='Hoạt động'}",
+          "legendFormat": "Hoạt động"
+        }
+      ]
+    },
+    {
+      "title": "Total Maintenance Cost (VND)",
+      "type": "stat",
+      "gridPos": { "h": 6, "w": 6, "x": 12, "y": 0 },
+      "targets": [
+        {
+          "expr": "maintenance_total_cost_vnd",
+          "legendFormat": "Cost (VND)"
+        }
+      ]
+    },
+    {
+      "title": "CPU Usage per Container (cAdvisor)",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 0, "y": 6 },
+      "targets": [
+        {
+          "expr": "rate(container_cpu_usage_seconds_total{name!=''}[1m]) * 100",
+          "legendFormat": "{{name}}"
+        }
+      ]
+    },
+    {
+      "title": "Memory Usage per Container",
+      "type": "timeseries",
+      "gridPos": { "h": 8, "w": 12, "x": 12, "y": 6 },
+      "targets": [
+        {
+          "expr": "container_memory_usage_bytes{name!=''}",
+          "legendFormat": "{{name}}"
+        }
+      ]
+    },
+    {
+      "title": "Recent Centralized Container Logs (Loki)",
+      "type": "logs",
+      "gridPos": { "h": 10, "w": 24, "x": 0, "y": 14 },
+      "targets": [
+        {
+          "expr": "{job=\"docker\"}",
+          "legendFormat": ""
+        }
+      ]
+    }
+  ],
+  "refresh": "5s",
+  "schemaVersion": 38,
+  "style": "dark",
+  "tags": ["devops", "monitoring", "asset-system"],
+  "time": { "from": "now-1h", "to": "now" },
+  "timepicker": {},
+  "timezone": "browser",
+  "title": "Hệ thống Quản lý Tài sản - Monitoring Dashboard",
+  "uid": "asset-system-devops",
+  "version": 1
+}
