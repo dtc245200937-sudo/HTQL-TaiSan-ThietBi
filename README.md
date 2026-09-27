@@ -116,31 +116,49 @@ Hệ thống Quản lý Tài sản / Thiết bị (Asset & Equipment Management 
 
 ---
 
-## 📊 6. Nhật ký Log tập trung Loki & LogQL Sample Queries
+## 6. Nhật ký Log tập trung Loki & LogQL Sample Queries
 
-Truy cập Grafana Explore -> Chọn Datasource **Loki**:
+Truy cập `Grafana → Explore → chọn Datasource Loki`.
 
-1. **Truy vấn 1: Xem tất cả log phát sinh từ Container Web App**:
-   ```logql
-   {job="docker", container="web-app"}
-   ```
+### Truy vấn 1 – Xem tất cả log của Web App
 
-2. **Truy vấn 2: Lọc các dòng Log có chứa lỗi (Error/Exception/DOWN)**:
-   ```logql
-   {job="docker"} |= "error" or "DOWN" or "Lỗi"
-   ```
+```logql
+{container="web-app"}
+```
 
-3. **Truy vấn 3: Thống kê tần suất số lượng Log theo thời gian (Log Rate trong 1 phút)**:
-   ```logql
-   rate({job="docker"}[1m])
-   ```
+Dùng để xem toàn bộ log phát sinh từ container Web App.
 
-4. **Truy vấn 4: Truy vấn chi tiết Log truy cập Nginx**:
-   ```logql
-   {job="docker", container="nginx"} |~ "GET /assets"
-   ```
+### Truy vấn 2 – Lọc log có chứa lỗi
 
----
+```logql
+{container=~".+"} |= "error"
+```
+
+Dùng để tìm các dòng log có chứa từ khóa `error`.
+
+### Truy vấn 3 – Thống kê tốc độ phát sinh log trong 1 phút
+
+```logql
+rate({container=~".+"}[1m])
+```
+
+Dùng để thống kê tốc độ phát sinh log trong khoảng thời gian 1 phút.
+
+### Truy vấn 4 – Xem log truy cập của Nginx
+
+```logql
+{container="nginx"} |~ "GET /assets"
+```
+
+Dùng để lọc các request GET đến đường dẫn `/assets`.
+
+### Truy vấn 5 – Xem toàn bộ log của các container
+
+```logql
+{container=~".+"}
+```
+
+Dùng để xem log của tất cả container được Promtail thu thập.
 
 ## 📝 7. Lịch sử Git Commits Quy chuẩn
 
