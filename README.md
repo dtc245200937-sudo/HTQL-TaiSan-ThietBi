@@ -93,11 +93,11 @@ Hệ thống Quản lý Tài sản / Thiết bị (Asset & Equipment Management 
 | Dịch Vụ | Đường Dẫn Truy Cập | Tài Khoản Mặc Định |
 | :--- | :--- | :--- |
 | **Website Quản lý Tài sản** | `https://localhost` hoặc `http://localhost` | Khai báo trực tiếp trên UI |
-| **pgAdmin (Quản trị DB)** | `http://localhost/pgadmin/` | Email: `admin@asset.local`<br>Pass: `AdminPgPass2026!` |
-| **Grafana Dashboard** | `http://localhost/grafana/` | User: `admin`<br>Pass: `GrafanaAdminPass2026!` |
+| **pgAdmin (Quản trị DB)** | `http://localhost/pgadmin/` | Xem thông tin đăng nhập trong file `.env` |
+| **Grafana Dashboard** | `http://localhost/grafana/` | Xem thông tin đăng nhập trong file `.env` |
 | **Prometheus Server** | `http://localhost:9090` | N/A |
-| **App Healthcheck** | `http://localhost:3000/health` | API JSON |
-| **App Prometheus Metrics** | `http://localhost:3000/metrics` | API Text Metrics |
+| **App Healthcheck** | `http://localhost/health` | API JSON |
+| **App Prometheus Metrics** | `web-app:3000/metrics` | Endpoint nội bộ Docker dùng cho Prometheus |
 
 ---
 
@@ -120,13 +120,13 @@ Hệ thống Quản lý Tài sản / Thiết bị (Asset & Equipment Management 
 
 Truy cập `Grafana → Explore → chọn Datasource Loki`.
 
-### Truy vấn 1 – Xem tất cả log của Web App
+### Truy vấn 1 – Xem log của các container
 
 ```logql
-{container="web-app"}
+{container=~".+"}
 ```
 
-Dùng để xem toàn bộ log phát sinh từ container Web App.
+Dùng để xem log của các container được Promtail thu thập.
 
 ### Truy vấn 2 – Lọc log có chứa lỗi
 
